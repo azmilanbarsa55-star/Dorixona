@@ -60,4 +60,3 @@ def get_drugs(drugs_name: str, db = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
