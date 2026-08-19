@@ -2,7 +2,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database.models import Base, Users, Drug
 from database.config import engine, get_db
-from database.schemes import UserData, Medicine
+from database.schemes import UserData, UsersUpdateData
+
 
 Base.metadata.create_all(engine)
 
@@ -26,37 +27,36 @@ def register_user(user_data: UserData, db = Depends(get_db)):
 
 
 @app.get("/users/")
-def get_users(db = Depends(get_db)):
-    users = db.query(Users).all()
-    return users
+def get_users(admin_id:int, start:int = 0, skip:int = 10, db = Depends(get_db)):
+   admin_user = db.query(Users).filter(Users.id == admin_id).first()
+   if admin_user.role.value == "admin":
+      users = db.query(Users).all()[start:skip]
+      return {"message":"Fetched successfully !", "success":True, "data":users}
+   else:
+      return {"message": "Bir aylanib keling", "success":False}
 
-@app.get("/users/{user_id}")
-def get_user(user_id: int, db = Depends(get_db)):
-    user = db.query(Users).filter(Users.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@app.post("/Drugs_registor/")
-def register_user(medicine: Medicine, db = Depends(get_db)):
-    try:
-      drug = Drug(**medicine.model_dump())
-      db.add(drug)
+@app.delete("/users-delete/{account_id}")
+def user_delete(account_id: int, admin_id: int, db = Depends(get_db)):
+   admin_users = db.query(Users).filter(Users.id == admin_id).first()
+   if admin_users.role.value == "admin":
+      delete_account = db.query(Users).filter(Users.id == account_id).first()
+      db.delete(delete_account)
       db.commit()
-      db.refresh(drug)
-      return drug
-    except Exception as error:
-      return {"message":"Failed", "error":str(error)}
+      return {"message":"Deleted ! ", "success":True}
+   else:
+      return{"message":"Bir aylanib keling", "success":False}
+@app.put("/account-update/")
+def account_update(admin_id:int, user_data:UsersUpdateData, db = Depends(get_db)):
+   admin_user = db.query(Users).filter(Users.id == admin_id).first()
+   if admin_user.role.value == "admin":
+      user = db.query(Users).filter(Users.id == user_data.id).first()
 
-@app.get("/Drugs/")
-def print_drugs(db = Depends(get_db)):
-    drugs = db.query(Drug).all()
-    return drugs
+      new_user_data = user_data.model_dump(exclude_unset=True)
 
-@app.get("/Drugs/{drugs_name}")
-def get_drugs(drugs_name: str, db = Depends(get_db)):
-    user = db.query(Drug).filter(Drug.name == drugs_name).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+      for key, value in new_user_data.items():
+         setattr(user, key, value)
+      db.commit()
+      db.refresh(user)
+      return {"message":"Updated !", "success":True, "data":user}
+   else:
+      return{"message":"Bir aylanib keling", "seccess":False}
