@@ -60,3 +60,18 @@ def get_drugs(drugs_name: str, db = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+@app.get("/Drugs_Most/")
+def get_most_drug(db = Depends(get_db)):
+    drug = db.query(Drug).order_by(Drug.amount.desc()).first()
+    if not drug:
+        raise HTTPException(status_code=404, detail="Drug not found")
+    return drug
+
+@app.get("/Drugs/least")
+def get_least_drug(db = Depends(get_db)):
+    drug = db.query(Drug).order_by(Drug.amount.asc()).first()
+    if not drug:  
+        raise HTTPException(status_code=404, detail="Drug not found")
+    return drug
