@@ -4,7 +4,6 @@ from database.models import Base, Users, Drug
 from database.config import engine, get_db
 from database.schemes import UserData, UsersUpdateData
 
-
 Base.metadata.create_all(engine)
 
 
