@@ -3,11 +3,16 @@ from fastapi import FastAPI, Depends, HTTPException
 from database.models import Base, Users, Drug
 from database.config import engine, get_db
 from database.schemes import UserData, UsersUpdateData
+from routes.drugs import drug_route
+
+
 
 Base.metadata.create_all(engine)
 
 
 app = FastAPI()
+
+app.include_router(drug_route)
 
 @app.get("/")
 def welcome():
@@ -34,6 +39,7 @@ def get_users(admin_id:int, start:int = 0, skip:int = 10, db = Depends(get_db)):
    else:
       return {"message": "Bir aylanib keling", "success":False}
 
+
 @app.delete("/users-delete/{account_id}")
 def user_delete(account_id: int, admin_id: int, db = Depends(get_db)):
    admin_users = db.query(Users).filter(Users.id == admin_id).first()
@@ -44,6 +50,8 @@ def user_delete(account_id: int, admin_id: int, db = Depends(get_db)):
       return {"message":"Deleted ! ", "success":True}
    else:
       return{"message":"Bir aylanib keling", "success":False}
+
+   
 @app.put("/account-update/")
 def account_update(admin_id:int, user_data:UsersUpdateData, db = Depends(get_db)):
    admin_user = db.query(Users).filter(Users.id == admin_id).first()

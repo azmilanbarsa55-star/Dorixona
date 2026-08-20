@@ -22,4 +22,3 @@ class DrugData(BaseModel):
     description: Text
     base_price: float
     sell_price: float
-    bar_code: Optional[str] = None

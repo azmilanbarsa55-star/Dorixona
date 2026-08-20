@@ -22,4 +22,34 @@ def drug_create(drug_data: DrugData, admin_id: int, db = Depends(get_db)):
 
     else:
         return {"message":"Bir aylanib kelish !", "success":False}
-    
+
+@drug_route.get("/all-drugs/")
+def all_drugs(admin_id: int, db = Depends(get_db)):
+    admin_user = db.query(Users).filter(Users.id == admin_id).first()
+
+    if admin_user.role.value == "admin":
+        users = db.query(Drug).all()
+        return {"message":"Fetched successfully !", "success":True, "data":users}
+    else:
+        return {"message": "Bir aylanib keling", "success":False}
+
+@drug_route.get("/get_drugs/{drugs_name}")
+def get_drugs(drug_name: str,admin_id: int, db = Depends(get_db)):
+    admin_user = db.query(Users).filter(Users.id == admin_id).first()
+
+    if admin_user.role.value == "admin":
+        drug = db.query(Drug).filter(Drug.name == drug_name).first()
+        return drug
+    else:
+        return {"message": "Bir aylanib keling", "success":False}
+
+@drug_route.delete("/delete_drug/{drug_id}")
+def delete_drug(admin_id: int,drug_id: int, db = Depends(get_db)):
+    admin_user = db.query(Users).filter(Users.id == admin_id).first()
+    if admin_user.role.value == "admin":
+        drug_del = db.query(Drug).filter(Drug.id == drug_id).first()
+        db.delete(Drug)
+        db.commit()
+        return {"message": "drug delete", "success":True}
+    else:
+        return {"message": "Bir aylanib keling", "success":False}

@@ -61,25 +61,3 @@ class CheckItem(Base):
     check = relationship("Check", back_populates="items")
 
 
-#@app.post("/Drugs_registor/")
-#def register_user(medicine: Medicine, db = Depends(get_db)):
-#    try:
- #     drug = Drug(**medicine.model_dump())
-#      db.add(drug)
-#      db.commit()
- #     db.refresh(drug)
- #     return drug
- #   except Exception as error:
- #     return {"message":"Failed", "error":str(error)}
-
-#@app.get("/Drugs/")
-#def print_drugs(db = Depends(get_db)):
-#    drugs = db.query(Drug).all()
- #   return drugs
-
-#@app.get("/Drugs/{drugs_name}")
-#def get_drugs(drugs_name: str, db = Depends(get_db)):
-#    user = db.query(Drug).filter(Drug.name == drugs_name).first()
- #   if not user:
- #       raise HTTPException(status_code=404, detail="User not found")
- #   return user
