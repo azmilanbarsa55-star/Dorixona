@@ -4,6 +4,7 @@ from database.models import Base, Users, Drug
 from database.config import engine, get_db
 from database.schemes import UserData, UsersUpdateData
 from routes.drugs import drug_route
+from routes.sale import check_sale
 
 
 
@@ -13,6 +14,7 @@ Base.metadata.create_all(engine)
 app = FastAPI()
 
 app.include_router(drug_route)
+app.include_router(check_sale)
 
 @app.get("/")
 def welcome():

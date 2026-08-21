@@ -2,6 +2,7 @@
 from sqlalchemy import String, Text, Float, Integer, ForeignKey, Boolean, Column, Enum, DateTime
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnumClass
+from datetime import datetime
 
 from database.config import Base
 
@@ -20,6 +21,7 @@ class Users(Base):
     role = Column(Enum(UserRole), nullable=False)
 
     checks = relationship("Check", back_populates="cashier")
+
 
 
 class Drug(Base):
@@ -42,7 +44,7 @@ class Check(Base):
     id = Column(Integer, primary_key=True)
 
     check_num = Column(String, unique=True)
-    date_create = Column(DateTime, nullable=False)
+    date_create = Column(DateTime, nullable=False , default=datetime.now())
 
     cashier_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 

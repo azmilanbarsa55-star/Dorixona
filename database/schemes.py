@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from database.models import UserRole
 from typing import Text
+from datetime import datetime
 
 class UserData(BaseModel):
     username: str
@@ -28,3 +29,16 @@ class DrugDataUpdate(BaseModel):
     description: Text | None = None
     base_price: float | None = None
     sell_price: float | None = None
+
+
+class DrugEnter(BaseModel):
+    id: int
+    amount: int
+
+
+class Check(BaseModel):
+    cassir_id: int
+
+
+class CheckItems(BaseModel):
+    amount: int
