@@ -67,3 +67,4 @@ def account_update(admin_id:int, user_data:UsersUpdateData, db = Depends(get_db)
       return {"message":"Updated !", "success":True, "data":user}
    else:
       return{"message":"Bir aylanib keling", "seccess":False}
+

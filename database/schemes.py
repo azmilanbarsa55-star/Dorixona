@@ -22,10 +22,9 @@ class DrugData(BaseModel):
     description: Text
     base_price: float
     sell_price: float
-class Drugupdata(BaseModel):
+class DrugDataUpdate(BaseModel):
     id: int
     name: str | None = None
-    amount: int | None = None
     description: Text | None = None
     base_price: float | None = None
     sell_price: float | None = None
