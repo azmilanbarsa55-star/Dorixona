@@ -5,8 +5,8 @@ from database.schemes import Check, CheckItems
 
 check_sale = APIRouter(tags=["Kassa Checks"])
 
-@check_sale.post("/drug-create/")
-def drug_create(cashier_is:Check, db = Depends(get_db)):
+@check_sale.post("/check-create/")
+def check_create(cashier_is:Check, db = Depends(get_db)):
 
     new_check = Check(**cashier_is.model_dump())
     db.add(new_check)
