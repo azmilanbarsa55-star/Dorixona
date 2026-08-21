@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from database.config import get_db
 from database.models import Drug, Users
-from database.schemes import DrugData
+from database.schemes import DrugData, Drugupdata
 
 drug_route = APIRouter(tags=["Drug routelari"])
 
@@ -53,3 +53,19 @@ def delete_drug(admin_id: int,drug_id: int, db = Depends(get_db)):
         return {"message": "drug delete", "success":True}
     else:
         return {"message": "Bir aylanib keling", "success":False}
+
+@drug_route.put("/update_drug/")
+def update_drug(admin_id: int, drug_data: Drugupdata, db = Depends(get_db)):
+    admin_user = db.query(Users).filter(Users.id == admin_id).first()
+    if admin_user.role.value == "admin":
+        drug = db.query(Drug).filter(Drug.id == drug_data.id).first()
+
+        new_drug_data = drug_data.model_dump(exclud e_unset=True)
+
+        for key, value in new_drug_data.items():
+            setattr(drug, key, value)
+            db.commit()
+            db.refresh(drug)
+            return {"message":"Updated !", "success":True, "data":drug}
+    else:
+        return{"message":"Bir aylanib keling", "seccess":False}
